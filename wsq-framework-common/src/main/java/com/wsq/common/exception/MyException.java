@@ -35,4 +35,13 @@ public class MyException extends RuntimeException {
         super(resultCodeEnum.getMessage());
         this.code = resultCodeEnum.getCode();
     }
+
+    @Override
+    public String toString() {
+        return "MyException{" +
+                "message=" + this.getMessage() +
+                "code=" + code +
+                '}';
+    }
+
 }
