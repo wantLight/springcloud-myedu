@@ -22,7 +22,6 @@ public class Swagger2Config {
 
     @Bean
     public Docket webApiConfig(){
-
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("webApi")
                 .apiInfo(webApiInfo())
@@ -30,7 +29,6 @@ public class Swagger2Config {
                 .paths(Predicates.not(PathSelectors.regex("/admin/.*")))
                 .paths(Predicates.not(PathSelectors.regex("/error.*")))
                 .build();
-
     }
 
     @Bean
