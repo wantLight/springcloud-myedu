@@ -17,6 +17,7 @@ public class ExcelImportUtil {
     private HSSFSheet sheet;
     private String pattern;// 日期格式
 
+
     public ExcelImportUtil() {
         super();
     }
