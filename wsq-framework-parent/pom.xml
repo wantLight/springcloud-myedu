@@ -40,6 +40,15 @@
     <dependencyManagement>
     <dependencies>
 
+        <!--Spring Cloud-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-dependencies</artifactId>
+            <version>Finchley.SR2</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+
         <dependency>
             <groupId>com.wsq</groupId>
             <artifactId>wsq-framework-common</artifactId>
@@ -107,14 +116,6 @@
             <version>${commons-fileupload.version}</version>
         </dependency>
 
-        <!--Spring Cloud-->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-dependencies</artifactId>
-            <version>Finchley.SR2</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
 
         <!--commons-io-->
         <dependency>

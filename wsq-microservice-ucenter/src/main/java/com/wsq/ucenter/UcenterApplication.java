@@ -1,4 +1,4 @@
-package com.wsq.edu;
+package com.wsq.ucenter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,18 +6,15 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
- * 只适用于Eureka作为注册中心
- *
  * @author xyzzg
  * @version 1.0
- * @date 2019-8-15 19:46
+ * @date 2019-8-26 21:05
  */
 @SpringBootApplication
-@ComponentScan(basePackages={"com.wsq.edu","com.wsq.common"})
+@ComponentScan(basePackages={"com.wsq.ucenter","com.wsq.common"})
 @EnableEurekaClient
-public class EduApplication {
-
+public class UcenterApplication {
     public static void main(String[] args) {
-        SpringApplication.run(EduApplication.class, args);
+        SpringApplication.run(UcenterApplication.class, args);
     }
 }
