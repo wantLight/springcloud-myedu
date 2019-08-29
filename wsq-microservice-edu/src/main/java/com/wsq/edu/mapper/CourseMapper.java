@@ -2,6 +2,8 @@ package com.wsq.edu.mapper;
 
 import com.wsq.edu.entity.Course;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.wsq.edu.vo.CoursePublishVo;
+import com.wsq.edu.vo.CourseWebVo;
 
 /**
  * <p>
@@ -13,4 +15,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface CourseMapper extends BaseMapper<Course> {
 
+    CoursePublishVo selectCoursePublishVoById(String id);
+
+    CourseWebVo selectCourseWebVoById(String courseId);
 }
