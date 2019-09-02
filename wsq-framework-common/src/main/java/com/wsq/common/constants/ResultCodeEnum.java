@@ -16,7 +16,9 @@ public enum ResultCodeEnum {
     JSON_PARSE_ERROR(false, 21002, "json解析异常"),
     PARAM_ERROR(false, 21003, "参数不正确"),
     FILE_UPLOAD_ERROR(false, 21004, "文件上传错误"),
-    EXCEL_DATA_IMPORT_ERROR(false, 21005, "Excel数据导入错误");
+    EXCEL_DATA_IMPORT_ERROR(false, 21005, "Excel数据导入错误"),
+    VIDEO_UPLOAD_TOMCAT_ERROR(false,21006,"阿里云视频点播出现异常"),
+    URL_ENCODE_ERROR(false,21007,"url解析失败");
 
     private Boolean success;
 

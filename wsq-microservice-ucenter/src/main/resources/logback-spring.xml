@@ -133,7 +133,7 @@
     <!--开发环境:打印控制台-->
     <springProfile name="dev">
         <!--可以输出项目中的debug日志，包括mybatis的sql日志-->
-        <logger name="com.guli" level="INFO" />
+        <logger name="com.wsq" level="INFO" />
 
         <!--
             root节点是必选节点，用来指定最基础的日志输出级别，只有一个level属性
@@ -153,7 +153,7 @@
     <springProfile name="pro">
 
         <!--可以输出项目中的debug日志，包括mybatis的sql日志-->
-        <logger name="com.guli" level="WARN" />
+        <logger name="com.wsq" level="WARN" />
 
         <root level="INFO">
             <appender-ref ref="ERROR_FILE" />
