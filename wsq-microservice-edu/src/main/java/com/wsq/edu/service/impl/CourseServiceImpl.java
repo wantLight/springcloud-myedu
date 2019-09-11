@@ -61,6 +61,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         CourseDescription courseDescription = new CourseDescription();
         courseDescription.setDescription(courseInfoForm.getDescription());
         courseDescription.setId(course.getId());
+
         courseDescriptionMapper.insert(courseDescription);
 
         return course.getId();
@@ -106,6 +107,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     @Override
     public void pageQuery(Page<Course> pageParam, CourseQuery courseQuery) {
 
+        /**
+         * QueryWrapper(LambdaQueryWrapper) 和 UpdateWrapper(LambdaUpdateWrapper) 的父类
+         * 用于生成 sql 的 where 条件, entity 属性也用于生成 sql 的 where 条件
+         *
+         */
         QueryWrapper<Course> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("gmt_create");
 

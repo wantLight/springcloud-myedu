@@ -33,6 +33,7 @@ public class Course implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public static final String COURSE_DRAFT = "Draft";
+
     public static final String COURSE_NORMAL = "Normal";
 
     @ApiModelProperty(value = "课程ID")
