@@ -1,6 +1,8 @@
 package com.wsq.edu.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsq.common.constants.ResultCodeEnum;
 import com.wsq.common.exception.MyException;
 import com.wsq.common.vo.R;
@@ -10,9 +12,18 @@ import com.wsq.edu.service.TeacherService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageDeliveryMode;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.AbstractJavaTypeMapper;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,6 +41,17 @@ public class TeacherAdminController {
     @Autowired
     private TeacherService teacherService;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private Environment env;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+
+
     @ApiOperation(value = "分页讲师列表")
     @GetMapping("{page}/{limit}")
     public R pageQuery(
@@ -41,6 +63,10 @@ public class TeacherAdminController {
 
             @ApiParam(name = "teacherQuery", value = "查询对象", required = false)
                     TeacherQuery teacherQuery){
+
+
+
+
 
         if(page <= 0 || limit <= 0){
             // 参数不正确
@@ -75,6 +101,22 @@ public class TeacherAdminController {
     public R save(
             @ApiParam(name = "teacher", value = "讲师对象", required = true)
             @RequestBody Teacher teacher){
+
+        //用 RabbitMQ 的 DirectExchange+RoutingKey 消息模型实现“记录日志”的场景
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        rabbitTemplate.setExchange(env.getProperty("log.user.exchange.name"));
+        rabbitTemplate.setRoutingKey(env.getProperty("log.user.routing.key.name"));
+
+        Message message= null;
+        try {
+            //将消息发送到 Exchange 的而不是 Queue，消息是以二进制流的形式进行传输
+            message = MessageBuilder.withBody(objectMapper.writeValueAsBytes(teacher)).setDeliveryMode(MessageDeliveryMode.PERSISTENT).build();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        message.getMessageProperties().setHeader(AbstractJavaTypeMapper.DEFAULT_CONTENT_CLASSID_FIELD_NAME, MessageProperties.CONTENT_TYPE_JSON);
+        rabbitTemplate.convertAndSend(message);
+
 
         teacherService.save(teacher);
         return R.ok();

@@ -1,0 +1,28 @@
+package com.wsq.edu;
+
+/**
+ * @author xyzzg
+ * @version 1.0
+ * @date 2019-9-12 11:16
+ */
+import com.wsq.edu.rabbitmq.Sender;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = EduApplication.class)
+public class RabbitmqHelloApplicationTests {
+
+    @Autowired
+    private Sender sender;
+
+    @Test
+    public void hello() throws Exception {
+        sender.send("msg");
+    }
+
+}
+
