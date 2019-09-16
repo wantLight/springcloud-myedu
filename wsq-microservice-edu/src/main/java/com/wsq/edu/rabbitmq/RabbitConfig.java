@@ -20,9 +20,11 @@ import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.amqp.SimpleRabbitListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +48,48 @@ public class RabbitConfig {
 
     @Autowired
     private SimpleRabbitListenerContainerFactoryConfigurer factoryConfigurer;
+
+    @Autowired
+    private UserOrderListener userOrderListener;
+
+    /**
+     * 在 RabbitMQConfig 中配置确认消费机制以及并发量的配置
+     */
+    @Bean(name = "userOrderQueue")
+    public Queue userOrderQueue(){
+        return new Queue(env.getProperty("user.order.queue.name"),true);
+    }
+
+    @Bean
+    public TopicExchange userOrderExchange(){
+        return new TopicExchange(env.getProperty("user.order.exchange.name"),true,false);
+    }
+
+    @Bean
+    public Binding userOrderBinding(){
+        return BindingBuilder.bind(userOrderQueue()).to(userOrderExchange()).with(env.getProperty("user.order.routing.key.name"));
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer listenerContainerUserOrder(@Qualifier("userOrderQueue") Queue userOrderQueue){
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        container.setMessageConverter(new Jackson2JsonMessageConverter());
+
+        //并发配置
+        container.setConcurrentConsumers(env.getProperty("spring.rabbitmq.listener.concurrency",Integer.class));
+        container.setMaxConcurrentConsumers(env.getProperty("spring.rabbitmq.listener.max-concurrency",Integer.class));
+        container.setPrefetchCount(env.getProperty("spring.rabbitmq.listener.prefetch",Integer.class));
+
+        //消息确认机制
+        container.setQueues(userOrderQueue);
+        //todo 确认机制需要 listener 实现 ChannelAwareMessageListener 接口，并重写其中的确认消费逻辑。在这里我们将用 “手动确认” 的机制来实战用户商城抢单场景。
+        container.setMessageListener(userOrderListener);
+        // 消息确认处理机制有三种：Auto - 自动、Manual - 手动、None - 无需确认
+        container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+
+        return container;
+    }
 
 
     /**
