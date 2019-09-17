@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+import java.util.Objects;
+
 /**
  *
  * 消费端的业务代码
@@ -40,4 +43,23 @@ public class CommonMqListener {
             e.printStackTrace();
         }
     }
+
+    //直接消费模式
+    @RabbitListener(queues = "${register.queue.name}",containerFactory = "singleListenerContainer")
+    public void consumeMessage(@Payload Teacher record){
+        try {
+            log.debug("消费者监听交易记录信息： {} ",record);
+
+            //TODO：表示已经到ttl了，却还没付款，则需要处理为失效
+            if (Objects.equals(1,record.getCareer())){
+//                record.setStatus(0);
+//                record.setUpdateTime(new Date());
+//                orderTradeRecordMapper.updateByPrimaryKeySelective(record);
+            }
+        }catch (Exception e){
+            log.error("消息体解析 发生异常； ",e.fillInStackTrace());
+        }
+    }
+
+
 }

@@ -8,7 +8,16 @@ package com.wsq.edu.rabbitmq;
  *
  * 创建RabbitMQ的配置类RabbitConfig，
  * 用来配置队列、交换器、路由等高级信息。
- * 这里我们以入门为主，先以最小化的配置来定义，以完成一个基本的生产和消费过程。
+ *
+ *
+ * 生产者：发送消息的程序
+ * 消费者：监听接收消费消息的程序
+ * 消息：一串二进制数据流
+ * 队列：消息的暂存区/存储区
+ * 交换机：消息的中转站，用于接收分发消息。其中有 fanout、direct、topic、headers 四种
+ * 路由：相当于密钥/第三者，与交换机绑定即可路由消息到指定的队列！
+ *
+ *
  *
  * @author xyzzg
  * @version 1.0
@@ -31,6 +40,9 @@ import org.springframework.context.annotation.Configuration;
 
 import org.springframework.core.env.Environment;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Configuration
 public class RabbitConfig {
@@ -52,8 +64,55 @@ public class RabbitConfig {
     @Autowired
     private UserOrderListener userOrderListener;
 
+
     /**
-     * 在 RabbitMQConfig 中配置确认消费机制以及并发量的配置
+     * 延时队列”
+     * “生产者生产消息，消息进入队列之后，并不会立即被指定的消费者所消费，而是会延时一段指定的时间ttl，最终才被消费者消费
+     */
+    @Bean(name = "registerDelayQueue")
+    public Queue registerDelayQueue(){
+        Map<String, Object> params = new HashMap<>();
+        params.put("x-dead-letter-exchange",env.getProperty("register.exchange.name"));
+        params.put("x-dead-letter-routing-key","all");
+        return new Queue(env.getProperty("register.delay.queue.name"), true,false,false,params);
+    }
+
+    @Bean
+    public DirectExchange registerDelayExchange(){
+        return new DirectExchange(env.getProperty("register.delay.exchange.name"));
+    }
+
+    @Bean
+    public Binding registerDelayBinding(){
+        return BindingBuilder.bind(registerDelayQueue()).to(registerDelayExchange()).with("");
+    }
+
+    /**延迟队列配置**/
+
+    /**指标消费队列配置**/
+
+    @Bean
+    public TopicExchange registerTopicExchange(){
+        return new TopicExchange(env.getProperty("register.exchange.name"));
+    }
+
+    @Bean
+    public Binding registerBinding(){
+        return BindingBuilder.bind(registerQueue()).to(registerTopicExchange()).with("all");
+    }
+
+    @Bean(name = "registerQueue")
+    public Queue registerQueue(){
+        return new Queue(env.getProperty("register.queue.name"),true);
+    }
+
+
+
+
+
+
+    /**
+     * 在 RabbitMQConfig 中配置 确认消费机制 以及并发量的配置
      */
     @Bean(name = "userOrderQueue")
     public Queue userOrderQueue(){
@@ -93,6 +152,7 @@ public class RabbitConfig {
 
 
     /**
+     * 消息模型：DirectExchange+RoutingKey 消息模型
      * RabbitMQ 的 DirectExchange+RoutingKey
      * 消息模型也实现“用户登录成功记录日志”的场景
      */

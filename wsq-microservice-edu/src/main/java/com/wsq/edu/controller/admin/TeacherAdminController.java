@@ -12,10 +12,8 @@ import com.wsq.edu.service.TeacherService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageBuilder;
-import org.springframework.amqp.core.MessageDeliveryMode;
-import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.AbstractJavaTypeMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -64,6 +62,22 @@ public class TeacherAdminController {
             @ApiParam(name = "teacherQuery", value = "查询对象", required = false)
                     TeacherQuery teacherQuery){
 
+
+
+
+        //TODO：设置超时，用mq处理已超时的下单记录（一旦记录超时，则处理为无效）
+        final Long ttl=env.getProperty("trade.record.ttl",Long.class);
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        rabbitTemplate.setExchange(env.getProperty("register.delay.exchange.name"));
+        rabbitTemplate.setRoutingKey("");
+        rabbitTemplate.convertAndSend(teacherQuery, new MessagePostProcessor() {
+            @Override
+            public Message postProcessMessage(Message message) throws AmqpException {
+                message.getMessageProperties().setHeader(AbstractJavaTypeMapper.DEFAULT_CONTENT_CLASSID_FIELD_NAME,Teacher.class.getName());
+                message.getMessageProperties().setExpiration(ttl+"");
+                return message;
+            }
+        });
 
 
 
