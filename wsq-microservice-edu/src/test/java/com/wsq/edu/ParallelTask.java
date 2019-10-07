@@ -41,6 +41,7 @@ public class ParallelTask {
                 listcount--;
                 if (listcount == 0) {
                     // 我是最后一个了，那么，好吧
+
                     fianltask.accept(null);
                 }
             }
@@ -95,6 +96,7 @@ public class ParallelTask {
             try {
                 System.out.println("do...... " + ((HashMap) o).get("data"));
                 Thread.sleep(Math.round(Math.random() * 60 + 5) * 100);
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
