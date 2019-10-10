@@ -20,7 +20,7 @@ import java.util.Objects;
  * @version 1.0
  * @date 2019-9-12 17:13
  */
-@Component
+//@Component
 public class CommonMqListener {
 
     private static final Logger log = LoggerFactory.getLogger(CommonMqListener.class);
