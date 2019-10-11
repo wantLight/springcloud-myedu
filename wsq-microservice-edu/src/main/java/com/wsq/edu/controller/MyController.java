@@ -47,12 +47,13 @@ public class MyController {
     private EsUtil esUtil;
 
     /**
-     * @param id 获取某一个
+     * @param id 获取某一个根据id
      */
     @GetMapping("/{id}")
     public Book getById(@PathVariable("id") int id) {
         SearchSourceBuilder builder = new SearchSourceBuilder();
         builder.query(new TermQueryBuilder("id", id));
+        //第一个是索引名
         List<Book> res = esUtil.search(EsUtil.INDEX_NAME, builder, Book.class);
         if (res.size() > 0) {
             return res.get(0);
@@ -127,7 +128,15 @@ public class MyController {
         esUtil.deleteByQuery(EsUtil.INDEX_NAME, new TermQueryBuilder("userId", userId));
     }
 
+    /**
+     * 复合查询
+     */
+    @PostMapping("/query1")
+    public List<Book> query(@PathVariable("userId") int userId){
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
+        return null;
+    }
 
 
 

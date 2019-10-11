@@ -116,8 +116,6 @@ public class EsUtil {
      *
      * @param index  index
      * @param entity 对象
-     * @author fanxb
-     * @date 2019/7/24 15:02
      */
     public void insertOrUpdateOne(String index, EsEntity entity) {
         IndexRequest request = new IndexRequest(index);
@@ -135,8 +133,6 @@ public class EsUtil {
      *
      * @param index index
      * @param list  带插入列表
-     * @author fanxb
-     * @date 2019/7/24 17:38
      */
     public void insertBatch(String index, List<EsEntity> list) {
         BulkRequest request = new BulkRequest();
@@ -154,8 +150,6 @@ public class EsUtil {
      *
      * @param index  index
      * @param idList 待删除列表
-     * @author fanxb
-     * @date 2019/7/25 14:24
      */
     public <T> void deleteBatch(String index, Collection<T> idList) {
         BulkRequest request = new BulkRequest();
@@ -174,8 +168,6 @@ public class EsUtil {
      * @param builder 查询参数
      * @param c       结果类对象
      * @return java.util.ArrayList
-     * @author fanxb
-     * @date 2019/7/25 13:46
      */
     public <T> List<T> search(String index, SearchSourceBuilder builder, Class<T> c) {
         SearchRequest request = new SearchRequest(index);
