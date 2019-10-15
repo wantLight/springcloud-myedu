@@ -6,6 +6,8 @@ import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -25,9 +27,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author xyzzg
@@ -160,6 +161,26 @@ public class EsUtil {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 通过id获取
+     * @return
+     */
+    public Map<String,Object> getById(String index,String id){
+        GetRequest getRequest = new GetRequest(EsUtil.INDEX_NAME,id);
+        GetResponse response=null;
+        try{
+            response= client.get(getRequest, RequestOptions.DEFAULT);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(!response.isExists()){
+            return null;
+        }
+        return response.getSource();
+    }
+
 
     /**
      * Description: 搜索

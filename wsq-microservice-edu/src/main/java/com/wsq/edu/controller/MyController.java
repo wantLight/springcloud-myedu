@@ -5,6 +5,9 @@ package com.wsq.edu.controller;
 import com.wsq.edu.entity.Book;
 import com.wsq.edu.entity.EsEntity;
 import com.wsq.edu.util.EsUtil;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,16 +75,24 @@ public class MyController {
 
     /**
      * 根据关键词搜索某用户下的书
-     *
+     * 复合查询
      * @param content 关键词
      */
     @GetMapping("/search")
     public List<Book> searchByUserIdAndName(int userId, String content) {
+        //构造bool查询
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
         boolQueryBuilder.must(QueryBuilders.termQuery("userId", userId));
         boolQueryBuilder.must(QueryBuilders.matchQuery("name", content));
+
+        //对应filter
+        //boolQueryBuilder.filter(QueryBuilders.rangeQuery("id").from(1).to(2));
+
         SearchSourceBuilder builder = new SearchSourceBuilder();
-        builder.size(10).query(boolQueryBuilder);
+        //排序
+        builder.sort(SortBuilders.fieldSort("name").order(SortOrder.DESC));
+        //分页
+        builder.from(1).size(10).query(boolQueryBuilder);
         return esUtil.search(EsUtil.INDEX_NAME, builder, Book.class);
     }
 
