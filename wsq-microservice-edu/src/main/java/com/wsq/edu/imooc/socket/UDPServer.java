@@ -21,8 +21,9 @@ public class UDPServer {
         byte[] data = packet.getData();
         String content = new String(data,0,packet.getLength());
 
+        System.out.println(content);
         //将要发送给客户端的数据转换成二进制 （简写了）
-        byte[] sendContent = String.valueOf(content.length()).getBytes();
+        byte[] sendContent = String.valueOf(content).getBytes();
         //发送数据报
         DatagramPacket datagramPacket = new DatagramPacket(sendContent,sendContent.length,packet.getAddress(),packet.getPort());
         datagramSocket.send(datagramPacket);

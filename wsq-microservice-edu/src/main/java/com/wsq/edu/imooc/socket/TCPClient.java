@@ -20,6 +20,8 @@ public class TCPClient {
         int ch = 0;
         byte[] buff = new byte[1024];
         ch = is.read(buff);
+
+
         String content = new String(buff,0,ch);
         System.out.println(content);
 

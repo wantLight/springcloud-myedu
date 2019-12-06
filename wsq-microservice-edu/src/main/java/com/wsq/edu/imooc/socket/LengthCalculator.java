@@ -28,7 +28,7 @@ public class LengthCalculator extends Thread {
             ch = is.read(buff);
             //byte数组转字符串
             String content = new String(buff,0,ch);
-            System.out.println(content);
+            System.out.println("线程"+Thread.currentThread().getName()+"接收到"+content);
 
             os.write(String.valueOf(content.length()).getBytes());
             is.close();
