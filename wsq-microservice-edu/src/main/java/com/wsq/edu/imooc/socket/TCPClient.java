@@ -12,11 +12,11 @@ import java.net.Socket;
  */
 public class TCPClient {
     public static void main(String[] args) throws IOException {
-        Socket socket = new Socket("127.0.0.1",65000);
+        Socket socket = new Socket("172.17.7.106",8081);
         OutputStream os = socket.getOutputStream();
         InputStream is = socket.getInputStream();
 
-        os.write(new String("hello xyzzg!").getBytes());
+        os.write(new String("a88130303030303036383332353037313201001c3a0125252531303030363905010000000a00020000022600030000012a0004000007e500050000000100c41d3a").getBytes());
         int ch = 0;
         byte[] buff = new byte[1024];
         ch = is.read(buff);
