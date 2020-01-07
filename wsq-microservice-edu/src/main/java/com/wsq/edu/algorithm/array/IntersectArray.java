@@ -3,6 +3,7 @@ package com.wsq.edu.algorithm.array;
 import com.google.common.collect.Lists;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -128,58 +129,96 @@ public class IntersectArray {
      * 只需要根据以上规则，验证已经填入的数字是否有效即可。
      * 给定数独序列只包含数字 1-9 和字符 '.' 。
      * 给定数独永远是 9x9 形式的。
+     *
+     *
+     * 出现的次数的题目，我们一般用hash表来做。（划重点）
      * @param board
      * @return
      */
     public static boolean isValidSudoku(char[][] board) {
+        int[][] rowCount = new int[10][9];
+        int[][] columnCount = new int[10][9];
+        int[][] subBoardCount = new int[10][9];
+
         for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                if (board[i][j] != '.'){
-                    //判断行
-                    char temp = board[i][j];
+            for (int j = 0; j < board[0].length; j++) {
+                int num = board[i][j] - '0';
 
-                    for (int k = i+1; k < board.length; k++) {
-                        if (board[k][j] == temp){
-                            System.out.println(k+","+j+","+temp);
-                            return false;
-                        }
-                    }
-                    //判断列
-                    for (int k = j+1; k < board[i].length; k++) {
-                        if (board[i][k] == temp){
-                            System.out.println(i+","+k+","+temp+"!!");
-                            return false;
-                        }
-                    }
-                    //判断九宫格 fix bug
-
-                    int rowNum = i % 3;
-                    int cellNum = j % 3;
-                    for (int k = 0; k < 3 - rowNum ; k++) {
-                        for (int l = 0; l < 3 - cellNum ; l++) {
-                            int s = j+l;
-                            if (k==0 && l==0){
-                                continue;
-                            }
-
-                            if (i+k < 9 && s <9 ){
-                                if (board[i+k][s] == temp){
-                                    System.out.println(i+","+j+",");
-                                    System.out.println(i+k+","+s+","+temp+"!!!");
-                                    return false;
-                                }
-                            }
-
-                        }
-                    }
-
+                if (board[i][j] != '.' &&
+                        (++rowCount[num][i] == 2  //表示第 i 行数字 num 出现的次数
+                                || ++columnCount[num][j] == 2  //表示第 j 列数字 num 出现的次数
+                                || ++subBoardCount[num][i / 3 * 3 + j / 3] == 2)  //表示小9宫格 num 出现的次数
+                ) {
+                    return false;
                 }
-
             }
+        }
+
+        for(int x=0; x<subBoardCount.length; x++) {
+            for(int y=0; y<subBoardCount[x].length; y++) {
+                System.out.print(subBoardCount[x][y]+" ");
+            }
+            System.out.println();
         }
 
         return true;
     }
+
+
+    public boolean isValidSudoku2(char[][] board) {
+        //最外层循环，每次循环并非只是处理第i行，而是处理第i行、第i列以及第i个3x3的九宫格
+        for(int i = 0; i < 9; i++){
+            HashSet<Character> line = new HashSet<>();
+            HashSet<Character> col = new HashSet<>();
+            HashSet<Character> cube = new HashSet<>();
+            for(int j = 0; j < 9; j++){
+                if('.' != board[i][j] && !line.add(board[i][j]))
+                    return false;
+                if('.' != board[j][i] && !col.add(board[j][i]))
+                    return false;
+                int m = i/3*3+j/3;
+                int n = i%3*3+j%3;
+                if('.' != board[m][n] && !cube.add(board[m][n]))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 给定一个 n × n 的二维矩阵表示一个图像。
+     *
+     * 将图像顺时针旋转 90 度。
+     *
+     * 说明：
+     *
+     * 你必须在原地旋转图像，这意味着你需要直接修改输入的二维矩阵。请不要使用另一个矩阵来旋转图像。
+     *
+     * @param matrix
+     */
+    public void rotate(int[][] matrix) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0){
+            return;
+        }
+        int col = matrix.length-1;
+        for(int j=0; j<matrix.length/2; j++,col--){
+            int r = col;//记录最后
+            int c = 0;//记录开始
+            for(int i=j;i<col; i++){
+                //这里只需要循环互换3次。即可把4个数字旋转成功
+                swap(matrix,i,j,r,i);
+                swap(matrix,r,i,r-c,r);
+                swap(matrix,r-c,r,j,r-c);
+                c++;
+            }
+        }
+    }
+    private void swap(int[][]matrix,int i1,int j1,int i2,int j2){
+        int temp = matrix[i1][j1];
+        matrix[i1][j1] = matrix[i2][j2];
+        matrix[i2][j2] = temp;
+    }
+
 
     public static void main(String[] args) {
 
