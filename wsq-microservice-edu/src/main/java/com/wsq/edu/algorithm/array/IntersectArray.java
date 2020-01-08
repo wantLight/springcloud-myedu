@@ -154,12 +154,12 @@ public class IntersectArray {
             }
         }
 
-        for(int x=0; x<subBoardCount.length; x++) {
-            for(int y=0; y<subBoardCount[x].length; y++) {
-                System.out.print(subBoardCount[x][y]+" ");
-            }
-            System.out.println();
-        }
+//        for(int x=0; x<subBoardCount.length; x++) {
+//            for(int y=0; y<subBoardCount[x].length; y++) {
+//                System.out.print(subBoardCount[x][y]+" ");
+//            }
+//            System.out.println();
+//        }
 
         return true;
     }
